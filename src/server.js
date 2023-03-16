@@ -8,6 +8,8 @@ import http from 'node:http'; // ESmodules = importação com import/export;
 
 // Cabeçalhos (Requisição/Response) = Metadados
 
+// HTTP Status Code
+
 const users = []
 
 const server = http.createServer((req, res) => {
@@ -20,17 +22,18 @@ const server = http.createServer((req, res) => {
 
   }
 
-  if(method === "POST" && url === "/users") {
+  if(method === "POST" && url === "/users") { 
     users.push({
       id: 1,
       name: 'Pedro Henrique',
       email: 'pedro@gmail.com'
     })
-
-    return res.end('Criação de novo usuário')
+     
+    // status = 201 significa o retorno de uma criação que ocorreu com sucesso.
+    return res.writeHead(201).end()
   }
 
-  return res.end('Hello Pedro')
+  return res.writeHead(404).end('Não encontrei essa rota')
 })
 
 server.listen(3333);
