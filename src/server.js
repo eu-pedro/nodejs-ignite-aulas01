@@ -12,21 +12,36 @@ import http from 'node:http'; // ESmodules = importação com import/export;
 
 const users = []
 
-const server = http.createServer((req, res) => {
+const server = http.createServer( async (req, res) => {
   const { method, url } = req
+
+  const buffers = []
+
+  for await(const chunk of req){
+    buffers.push(chunk)
+  }
+
+  try {
+    req.body = JSON.parse(Buffer.concat(buffers).toString())
+
+  } catch(error){
+    req.body = null
+  }
+  // console.log(body)
+
   console.log(method, url)
   if(method === "GET" && url === "/users") {
     return res
       .setHeader('Content-Type', 'application/json')
       .end(JSON.stringify(users))
-
   }
 
   if(method === "POST" && url === "/users") { 
+    const { name, email } = req.body
     users.push({
       id: 1,
-      name: 'Pedro Henrique',
-      email: 'pedro@gmail.com'
+      name: name,
+      email: email 
     })
      
     // status = 201 significa o retorno de uma criação que ocorreu com sucesso.
