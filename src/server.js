@@ -1,5 +1,7 @@
 // const http = require('node:http');  CommonJs = importação com require;
 import http from 'node:http'; // ESmodules = importação com import/export;
+import { Json } from './middlewares/json.js';
+import { Database } from './database.js';
 
 // padrão de importão CommonJs = usando o require.
 // novo tipo de padrão = ESmodules => Import/Export
@@ -10,39 +12,29 @@ import http from 'node:http'; // ESmodules = importação com import/export;
 
 // HTTP Status Code
 
-const users = []
+const database = new Database()
 
 const server = http.createServer( async (req, res) => {
   const { method, url } = req
 
-  const buffers = []
-
-  for await(const chunk of req){
-    buffers.push(chunk)
-  }
-
-  try {
-    req.body = JSON.parse(Buffer.concat(buffers).toString())
-
-  } catch(error){
-    req.body = null
-  }
+  await Json(req, res)
   // console.log(body)
 
-  console.log(method, url)
+  // console.log(method, url)
   if(method === "GET" && url === "/users") {
-    return res
-      .setHeader('Content-Type', 'application/json')
-      .end(JSON.stringify(users))
+    const users = database.select('users')
+    return res.end(JSON.stringify(users))
   }
 
   if(method === "POST" && url === "/users") { 
     const { name, email } = req.body
-    users.push({
+    const user = {
       id: 1,
       name: name,
       email: email 
-    })
+    }
+
+    database.insert('users', user)
      
     // status = 201 significa o retorno de uma criação que ocorreu com sucesso.
     return res.writeHead(201).end()
