@@ -2,6 +2,7 @@
 import http from 'node:http'; // ESmodules = importação com import/export;
 import { Json } from './middlewares/json.js';
 import { Database } from './database.js';
+import { randomUUID } from 'node:crypto';
 
 // padrão de importão CommonJs = usando o require.
 // novo tipo de padrão = ESmodules => Import/Export
@@ -29,7 +30,7 @@ const server = http.createServer( async (req, res) => {
   if(method === "POST" && url === "/users") { 
     const { name, email } = req.body
     const user = {
-      id: 1,
+      id: randomUUID(),
       name: name,
       email: email 
     }
