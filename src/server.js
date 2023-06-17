@@ -1,8 +1,7 @@
 // const http = require('node:http');  CommonJs = importação com require;
 import http from 'node:http'; // ESmodules = importação com import/export;
 import { Json } from './middlewares/json.js';
-import { Database } from './database.js';
-import { randomUUID } from 'node:crypto';
+import { routes } from './routes.js';
 
 // padrão de importão CommonJs = usando o require.
 // novo tipo de padrão = ESmodules => Import/Export
@@ -13,32 +12,30 @@ import { randomUUID } from 'node:crypto';
 
 // HTTP Status Code
 
-const database = new Database()
+// query parameters: 
+// route parameters: identificação de recurso
+// request body: envio de informações de um formulário
+
+
+// 1) parametros nomeados: http://localhost:3333/users?userId=1&name=Pedro => usada quando precisamos ter uma url statefull, enviar informações que não são sensível e serve para modificar a resposta que o backend vai nos dar => filtros, paginação, busca
+
+
+// 2) parametros não nomeados: http://localhost:3333/1 => GET, BUscar usuário com ID = 1
+
+
+
 
 const server = http.createServer( async (req, res) => {
   const { method, url } = req
 
   await Json(req, res)
-  // console.log(body)
+  
+  const route = routes.find(route => {
+    return route.method === method && route.path === url 
+  })
 
-  // console.log(method, url)
-  if(method === "GET" && url === "/users") {
-    const users = database.select('users')
-    return res.end(JSON.stringify(users))
-  }
-
-  if(method === "POST" && url === "/users") { 
-    const { name, email } = req.body
-    const user = {
-      id: randomUUID(),
-      name: name,
-      email: email 
-    }
-
-    database.insert('users', user)
-     
-    // status = 201 significa o retorno de uma criação que ocorreu com sucesso.
-    return res.writeHead(201).end()
+  if(route) {
+    return route.handler(req, res)
   }
 
   return res.writeHead(404).end('Não encontrei essa rota')
