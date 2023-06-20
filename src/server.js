@@ -29,12 +29,20 @@ const server = http.createServer( async (req, res) => {
   const { method, url } = req
 
   await Json(req, res)
+
   
   const route = routes.find(route => {
-    return route.method === method && route.path === url 
+    // console.log(route.path.test(url))
+
+    // toda regex retorna um método chamado test() para verificar se o conteúdo verificado bate ou não com a regex.
+    return route.method === method && route.path.test(url)
   })
 
   if(route) {
+    const routeParams = req.url.match(route.path)
+
+    console.log(routeParams)
+
     return route.handler(req, res)
   }
 

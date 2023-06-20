@@ -1,7 +1,7 @@
 import fs from 'node:fs/promises'
 
 // informa o caminho até chegar no arquivo aberto
- console.log(import.meta.url)
+//  console.log(import.meta.url)
 
 // 1) novo do arquivo
 // 2) caminho relativo onde quero criar o arquivo
