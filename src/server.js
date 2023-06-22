@@ -2,6 +2,7 @@
 import http from 'node:http'; // ESmodules = importação com import/export;
 import { Json } from './middlewares/json.js';
 import { routes } from './routes.js';
+import { extractQueryParameters } from './utils/extrac-query-params.js';
 
 // padrão de importão CommonJs = usando o require.
 // novo tipo de padrão = ESmodules => Import/Export
@@ -40,8 +41,16 @@ const server = http.createServer( async (req, res) => {
 
   if(route) {
     const routeParams = req.url.match(route.path)
+    console.log({...routeParams.groups})
+    // console.log(routeParams.groups.id)
+    // criando um objeto novo e pegando o valor de routeParams.groups
+    // console.log(routeParams.groups)
 
-    console.log(routeParams)
+    const { query, ...params } = routeParams.groups
+    // enviando req.params pois ele está sendo passado para frente e qualquer método que receba req em seu parâmetro, terá acesso ao valor.
+
+    req.params = params
+    req.query = query ? extractQueryParameters(query) : {}
 
     return route.handler(req, res)
   }

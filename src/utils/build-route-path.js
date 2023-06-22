@@ -13,7 +13,11 @@ export function buildRoutePath(path){
 
   // validando se começa com o pathWithParams
 
-  const pathRegex = new RegExp(`^${pathWithParams}`)
+  // $ no final é para ele entender que o regex em questão é para estar só no final.
+  // .* é para pegar tudo dps que vem do ponto de interrogação.
+  // . -> qualquer caracter
+  // * -> inumeras vezes
+  const pathRegex = new RegExp(`^${pathWithParams}(?<query>\\?(.*))?$`)
 
   return pathRegex;
 }
