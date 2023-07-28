@@ -9,8 +9,12 @@ export const routes = [
     method: 'GET',
     path: buildRoutePath('/users'),
     handler: (req, res) => {
-      console.log(req.query)
-      const users = database.select('users')
+      // console.log(req.query)
+      const { search } = req.query
+      const users = database.select('users', search ? { 
+        name: search,
+        email: search
+      } : null)
 
       return res.end(JSON.stringify(users))
     }
@@ -19,14 +23,15 @@ export const routes = [
     method: 'POST',
     path: buildRoutePath('/users'),
     handler: (req, res) => {
-      const { name, email } = req.body
-      const user = {
-        id: randomUUID(),
-        name: name,
-        email: email 
-      }
+      console.log(req.body)
+      // const { name, email } = req.body
+      // const user = {
+      //   id: randomUUID(),
+      //   name: name,
+      //   email: email 
+      // }
 
-      database.insert('users', user)
+      // database.insert('users', user)
      
       // status = 201 significa o retorno de uma criação que ocorreu com sucesso.
       return res.writeHead(201).end()

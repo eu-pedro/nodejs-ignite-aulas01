@@ -24,8 +24,23 @@ export class Database {
     fs.writeFile(databasePath, JSON.stringify(this.#database))
   }
 
-  select(table) {
-    const data = this.#database[table] ?? []
+  select(table, search) {
+    let data = this.#database[table] ?? []
+
+    // curiosidade: let vem de let it change
+
+    if(search) {
+      data = data.filter(row => {
+        // transformando o objeto search em uma array, exemplo: { name: 'Pedro', email: 'pedro@gmail.com' } => isso ficará assim: [ ['name', 'Pedro'], ['email', 'pedro@gmail.com'] ]
+
+        // como funciona o some: percorre o array e se pelo menos uma das vezes que ele percorre o array retornar true, quer dizer que o item do array deve ser incluido no filtro.
+        return Object.entries(search).some(([key, value]) => {
+          console.log(row[key].toLowerCase().includes(value.toLowerCase()))
+          return row[key].toLowerCase().includes(value.toLowerCase())
+        })
+      })
+    }
+    console.log(data)
     return data
   }
 
